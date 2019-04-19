@@ -112,8 +112,6 @@ class InfoList extends StatelessWidget{
       style: TextStyle(color: Colors.black, fontSize: 24.0, decoration: TextDecoration.underline),
     );
 
-    final trailSummary  = new Container();
-
     final trailConditionsSummary = Text(
       newTrails[0][curIndex]['summary'].toString(),
       style: TextStyle(color: Colors.black, fontSize: 18.0),
@@ -134,9 +132,8 @@ class InfoList extends StatelessWidget{
         width: MediaQuery.of(context).size.width/3,
         child: RaisedButton(
           onPressed: () => {
-            addTrailToDatabase( newTrails[0][curIndex]['id'].toString(),  newTrails[0][curIndex]['name'].toString(),
-                newTrails[0][curIndex]['location'].toString(), newTrails[0][curIndex]['imgSmall'])
-
+            addTrailToDatabase(newTrails[0][curIndex]['id'].toString(), newTrails[0][curIndex]['name'].toString(), newTrails[0][curIndex]['location'].toString(), newTrails[0][curIndex]['imgSmall']),
+            print("added trail to database")
           },
           color: Color.fromRGBO(58, 66, 86, 1.0),
           child:
