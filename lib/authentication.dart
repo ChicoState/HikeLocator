@@ -2,9 +2,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/material.dart';
+import 'screens/home_screen.dart';
+import 'screens/profile_screen.dart';
+import 'screens/login_screen.dart';
 FirebaseUser mCurrentUser;
 final FirebaseAuth _auth = FirebaseAuth.instance;
-final formkey = new GlobalKey<FormState>();
+final formkey = GlobalKey<FormState>();
+final formkey2 = GlobalKey<FormState>();
+final formkey3 = GlobalKey<FormState>();
 String _email;
 String _password;
 
@@ -25,6 +30,7 @@ Widget emailField() {
     },
     onSaved: (String value) {
       _email = value;
+      print(_email);
     },
   );
 }
@@ -43,8 +49,6 @@ Widget passwordField() {
     },
   );
 }
-
-
 
 addUserToDatabase(String uid, fname, lname, email) async{
   Firestore.instance
@@ -103,8 +107,8 @@ addTrailToDatabase(trailId, trailName, trailLoc, trailUrl) async{
   });
 }
 loginUser(context) async {
-  formkey.currentState.save();
-  if (formkey.currentState.validate()) {
+  formkey2.currentState.save();
+  if (formkey2.currentState.validate()) {
     await _auth
         .signInWithEmailAndPassword(email: _email, password: _password)
         .catchError((e) {
@@ -137,15 +141,14 @@ loginUser(context) async {
             fontSize: 16.0
         );
       });
-      welcomeUser();
-      Navigator.of(context).pop();
+      welcomeUser(newUser);
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyApp(1)));
     });
   }
 }
-welcomeUser() async{
-  mCurrentUser = await _auth.currentUser();
+welcomeUser(newUser) async{
   DocumentSnapshot result = await Firestore.instance.collection('users')
-      .document(mCurrentUser.uid).get();
+      .document(newUser.uid).get();
   String myResult = result['First Name'];
   Fluttertoast.showToast(
       msg: "Welcome $myResult!",
@@ -156,9 +159,6 @@ welcomeUser() async{
       textColor: Colors.white,
       fontSize: 16.0
   );
-
-
-
 }
  getSignedInUser() async {
   mCurrentUser = await FirebaseAuth.instance.currentUser();
@@ -170,17 +170,16 @@ welcomeUser() async{
   }
 }
 createUser(context) async {
-  formkey.currentState.save();
-  if (formkey.currentState.validate()) {
-
+  formkey3.currentState.save();
+  if (formkey3.currentState.validate()) {
     await _auth
         .createUserWithEmailAndPassword(email: _email, password: _password)
         .then((newUser) {
-      Navigator.of(context).pop();
-      welcomeUser();
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyApp(1)));
+      welcomeUser(newUser);
       addUserToDatabase(newUser.uid, _firstname, _lastname, newUser.email);
     }).catchError((e) {
-      formkey.currentState.reset();
+      formkey3.currentState.reset();
       Fluttertoast.showToast(
           msg: "Email address already exists",
           toastLength: Toast.LENGTH_LONG,
@@ -196,8 +195,8 @@ createUser(context) async {
 
 signOutUser () async{
   await _auth.signOut();
-
 }
+
 Widget confirmField() {
   return TextFormField(
     obscureText: true,
@@ -219,7 +218,6 @@ Widget confirmField() {
 
 Widget firstNameField() {
   return TextFormField(
-
     decoration: InputDecoration(
         labelText: "First Name"),
     validator: (String value) {
@@ -234,7 +232,6 @@ Widget firstNameField() {
 }
 Widget lastNameField() {
   return TextFormField(
-
     decoration: InputDecoration(
         labelText: "Last Name"),
     validator: (String value) {
@@ -245,5 +242,61 @@ Widget lastNameField() {
     onSaved: (String value) {
       _lastname = value;
     },
+  );
+}
+
+Widget profile(context) {
+  return RaisedButton(
+    color: Color.fromRGBO(58, 66, 86, 1.0),
+    child: Text("Profile", style: TextStyle(color: Colors.white)),
+    onPressed: () async{
+      var user = await getSignedInUser();
+      DocumentReference doc = Firestore.instance.collection("users").document(user.uid);
+      QuerySnapshot querySnapshot = await Firestore.instance.collection("users").document(user.uid).collection("trails").getDocuments();
+      var list = querySnapshot.documents;
+      List<Widget> _widgets = list.map((doc) =>
+          Column(
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  Expanded(flex: 2, child: Image.network(doc.data["Image Url"].toString() , fit: BoxFit.cover)),
+                  Expanded(flex: 1, child: Text(""),),
+                  Expanded(flex: 3, child: Text(
+                    "${doc.data["Trail Name"].toString()}  \n"
+                        "${doc.data["Trail Location"].toString()}",
+                    style: TextStyle(color: Colors.black,),
+                  ),)
+                ],
+              ),
+            ],)
+      ).toList();
+      var firstName = "doesn't exist";
+      var lastName = "doesn't exist";
+      var email = "doesn't exist";
+      await doc.get().then((onValue){
+        if(onValue.exists){
+          firstName = onValue.data['First Name'];
+          lastName = onValue.data['Last Name'];
+          email = onValue.data['Email'];
+        }
+      });
+      Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ProfileScreen(firstName, lastName, email, _widgets),
+          )
+      );
+    },
+  );
+}
+
+Widget logoutButton(context){
+  return RaisedButton(
+      color: Color.fromRGBO(58, 66, 86, 1.0),
+      child: Text("Log Out", style: TextStyle(color: Colors.white)),
+      onPressed: () async {
+        signOutUser();
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LogInScreen()));
+      }
   );
 }
