@@ -5,26 +5,30 @@ import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart';
 import '../screens/map_screen.dart';
 import '../models/trail_model.dart';
-import 'login_screen.dart';
-import 'signup_screen.dart';
 import '../authentication.dart';
-import 'profile_screen.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-
+import 'package:fluttertoast/fluttertoast.dart';
 class MyApp extends StatefulWidget{
+  final int loggedIn;
+  MyApp(this.loggedIn);
   @override
   State<StatefulWidget> createState(){
-    return HomeScreen();
+    return HomeScreen(loggedIn);
   }
 }
 
 class HomeScreen extends State<MyApp> {
   double userLat;
   double userLon;
-  double distance = 10;
-  double length = 0;
-  double results = 10;
-  final formkey = GlobalKey<FormState>();
+  double distance = 10.0;
+  double length = 1.0;
+  double results = 10.0;
+  int loggedIn;
+  bool _isenabled = false;
+  bool _canSwitch = true;
+  String distFromUser = 'Distance From User: 10';
+  String len = 'Minimum Length of Trail: 1';
+  String num = 'Number of Results: 10';
+  HomeScreen(this.loggedIn);
   List<TrailModel> trails = [];
   List<dynamic> finalTrails = [];
   Future<List<dynamic>> fetchData() async {
@@ -32,18 +36,15 @@ class HomeScreen extends State<MyApp> {
         .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
     userLat = position.latitude;
     userLon = position.longitude;
-
     var response = await get(
         'https://www.hikingproject.com/data/get-trails?lat=$userLat&lon=$userLon&maxDistance=$distance&minLength=$length&maxResults=$results&key=200419778-6a46042e219d019001dd83b13d58aa59');
     var trailModel = TrailModel.fromJson(json.decode(response.body));
-
     trails.clear();
     finalTrails.clear();
     for (int i = 0; i < results; i++) {
       Object myText = json.encode(trailModel.trails);
       finalTrails.add(json.decode(myText));
     }
-
     return finalTrails;
   }
 
@@ -68,11 +69,11 @@ class HomeScreen extends State<MyApp> {
                       margin: EdgeInsets.only(top: 25.0),
                     ),
                     submitButton(),
-                    loginButton(),
-                    signupButton(),
-                    logoutButton(),
-                    profile(),
-                  ],
+                    filter(),
+                  ]+ (loggedIn == 0 ? [] : [
+                    profile(context),
+                    logoutButton(context)
+                  ]),
                 ),
               )
           ),
@@ -82,29 +83,89 @@ class HomeScreen extends State<MyApp> {
 
   Widget distanceFromUser() {
     return TextFormField(
+      enabled: _isenabled,
       decoration: InputDecoration(
-          labelText: "Distance From User", hintText: 'x.x miles'),
+          labelText: distFromUser, hintText: 'x mile(s)'),
       onSaved: (String value) {
-        distance = double.parse(value);
+        if(value.isEmpty && _isenabled == false){
+          distance = 10.0;
+          setState(() {
+            _canSwitch = true;
+          });
+        }
+        else {
+          if(value.isEmpty && _isenabled == true){
+            setState(() {
+              _canSwitch = false;
+            });
+          }
+          else {
+            distance = double.parse(value);
+            setState(() {
+              _canSwitch = true;
+            });
+          }
+        }
       },
     );
   }
 
   Widget lengthOfTrail() {
     return TextFormField(
+      enabled: _isenabled,
       decoration: InputDecoration(
-          labelText: "Minimum Length of Trail", hintText: 'x.x miles'),
+          labelText: len, hintText: 'x mile(s)'),
       onSaved: (String value) {
-        length = double.parse(value);
+        if(value.isEmpty && _isenabled == false){
+          length = 10.0;
+          setState(() {
+            _canSwitch = true;
+          });
+        }
+        else {
+          if(value.isEmpty && _isenabled == true){
+            setState(() {
+              _canSwitch = false;
+            });
+          }
+          else {
+            length = double.parse(value);
+            setState(() {
+              _canSwitch = true;
+            });
+
+          }
+        }
       },
     );
   }
+
   Widget numOfResults() {
     return TextFormField(
+      enabled: _isenabled,
       decoration: InputDecoration(
-          labelText: "Number of results", hintText: 'Top x results'),
+          labelText: num, hintText: 'top x results'),
       onSaved: (String value) {
-        results = double.parse(value);
+        if(value.isEmpty && _isenabled == false){
+          results = 10.0;
+          setState(() {
+            _canSwitch = true;
+          });
+        }
+        else {
+          if(value.isEmpty && _isenabled == true){
+            setState(() {
+              _canSwitch = false;
+            });
+          }
+          else {
+            results = double.parse(value);
+            setState(() {
+              _canSwitch = true;
+            });
+
+          }
+        }
       },
     );
   }
@@ -115,96 +176,50 @@ class HomeScreen extends State<MyApp> {
       child: Text("Find trails near me", style: TextStyle(color: Colors.white)),
       onPressed: () async {
         formkey.currentState.save();
-        final trails = await fetchData();
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => MapScreen(trails, userLat, userLon)),
-        );
-      },
-    );
-  }
-
-  Widget loginButton() {
-    return RaisedButton(
-      color: Color.fromRGBO(58, 66, 86, 1.0),
-      child: Text("Log In", style: TextStyle(color: Colors.white)),
-      onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => LogInScreen()),
-        );
-      },
-    );
-  }
-
-
-
-  Widget logoutButton(){
-      return RaisedButton(
-        color: Color.fromRGBO(58, 66, 86, 1.0),
-        child: Text("Log Out", style: TextStyle(color: Colors.white)),
-        onPressed: () async {
-          await signOutUser();
+        if (_canSwitch == true) {
+          final trails = await fetchData();
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => MapScreen(trails, userLat, userLon)),
+          );
         }
-      );
-  }
-
-  Widget profile() {
-    return RaisedButton(
-      color: Color.fromRGBO(58, 66, 86, 1.0),
-      child: Text("Profile", style: TextStyle(color: Colors.white)),
-      onPressed: () async{
-        var user = await getSignedInUser();
-        DocumentReference doc = Firestore.instance.collection("users").document(user.uid);
-        QuerySnapshot querySnapshot = await Firestore.instance.collection("users").document(user.uid).collection("trails").getDocuments();
-        var list = querySnapshot.documents;
-
-        List<Widget> _widgets = list.map((doc) =>
-           Column(
-                 children: <Widget>[
-                 Row(
-                   mainAxisAlignment: MainAxisAlignment.start,
-                   children: <Widget>[
-                     Expanded(flex: 2, child: Image.network(doc.data["Image Url"].toString() , fit: BoxFit.cover)),
-                     Expanded(flex: 1, child: Text(""),),
-                     Expanded(flex: 3, child: Text(
-                      "${doc.data["Trail Name"].toString()}  \n"
-                      "${doc.data["Trail Location"].toString()}",
-                      style: TextStyle(color: Colors.black,),
-                      ),)
-                   ],
-                 ),
-            ],)
-          ).toList();
-        var firstName = "doesn't exist";
-        var lastName = "doesn't exist";
-        var email = "doesn't exist";
-        await doc.get().then((onValue){
-          if(onValue.exists){
-            firstName = onValue.data['First Name'];
-            lastName = onValue.data['Last Name'];
-            email = onValue.data['Email'];
-          }
-        });
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => ProfileScreen(firstName, lastName, email, _widgets),
-        )
-        );
-        },
-
+        else{
+          Fluttertoast.showToast(
+              msg: "Please enter a search criteria.",
+              toastLength: Toast.LENGTH_LONG,
+              gravity: ToastGravity.TOP,
+              timeInSecForIos: 1,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+              fontSize: 16.0
+          );
+        }
+      }
     );
   }
-  Widget signupButton() {
+  Widget filter() {
     return RaisedButton(
       color: Color.fromRGBO(58, 66, 86, 1.0),
-      child: Text("Sign Up", style: TextStyle(color: Colors.white)),
-      onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => SignUpScreen()),
-        );
+      child: Text("Edit Search Criteria", style: TextStyle(color: Colors.white)),
+      onPressed: () async {
+        if(_isenabled == false){
+        setState(() {
+          _isenabled = true;
+          distFromUser = 'Enter distance from you to search';
+          len = 'Enter length of trail';
+          num = 'Enter num of search results';
+        });
+        }
+        else{
+          setState(() {
+            _isenabled = false;
+            distFromUser = 'Distance From User: 10';
+            len = 'Minimum Length of Trail: 1';
+            num = 'Number of Results: 10';
+
+          });
+        }
       },
     );
   }
