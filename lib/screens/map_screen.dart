@@ -41,6 +41,7 @@ class _MapScreenState extends State<MapScreen> {
 //    }
   }
 
+  /// adds trail heads to map screen
   void _addTrails() {
     // add markers on list to view when map opens
     int trailLength = newTrails[0].length;
@@ -69,21 +70,11 @@ class _MapScreenState extends State<MapScreen> {
     mapController.addMarker(
       MarkerOptions(
         position: LatLng(
-          userLat,
-          userLon,
-        ),
-        infoWindowText: InfoWindowText('User\'s Location', '5 Star Rating'),
-        icon: BitmapDescriptor.defaultMarker,
-      ),
-    );
-    mapController.addMarker(
-      MarkerOptions(
-        position: LatLng(
           hike['latitude'],
           hike['longitude'],
         ),
         infoWindowText: InfoWindowText(hike['name'], (hike['stars'].toString() + "/5 Stars")),
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueMagenta),
+        icon: BitmapDescriptor.defaultMarker,
       ),
     );
   }
