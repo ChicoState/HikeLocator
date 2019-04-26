@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import '../models/trail_model.dart';
-import 'dart:convert';
 import '../screens/info_screen.dart';
+import 'package:geolocator/geolocator.dart';
 
 class MapScreen extends StatefulWidget {
   final List<dynamic> newTrails;
@@ -24,6 +23,8 @@ class _MapScreenState extends State<MapScreen> {
   final double userLon;
   final List<dynamic> newTrails; //declare for new tails list
 
+  String searchAddr;
+
   _MapScreenState(this.newTrails, this.userLat, this.userLon);
 
   /// FUNCTIONS
@@ -40,6 +41,7 @@ class _MapScreenState extends State<MapScreen> {
 //    }
   }
 
+  /// adds trail heads to map screen
   void _addTrails() {
     // add markers on list to view when map opens
     int trailLength = newTrails[0].length;
@@ -68,23 +70,22 @@ class _MapScreenState extends State<MapScreen> {
     mapController.addMarker(
       MarkerOptions(
         position: LatLng(
-          userLat,
-          userLon,
-        ),
-        infoWindowText: InfoWindowText('User\'s Location', '5 Star Rating'),
-        icon: BitmapDescriptor.defaultMarker,
-      ),
-    );
-    mapController.addMarker(
-      MarkerOptions(
-        position: LatLng(
           hike['latitude'],
           hike['longitude'],
         ),
         infoWindowText: InfoWindowText(hike['name'], (hike['stars'].toString() + "/5 Stars")),
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueMagenta),
+        icon: BitmapDescriptor.defaultMarker,
       ),
     );
+  }
+
+  searchandNavigate() {
+    Geolocator().placemarkFromAddress(searchAddr).then((result) {
+      mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+          target:
+          LatLng(result[0].position.latitude, result[0].position.longitude),
+          zoom: 10.0)));
+    });
   }
 
   /// BODY VIEW
@@ -105,6 +106,32 @@ class _MapScreenState extends State<MapScreen> {
                   cameraPosition: CameraPosition(
                     target: LatLng(userLat, userLon),
                     zoom: 12.0,
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: 60.0,
+                right: 15.0,
+                left: 15.0,
+                child: Container(
+                  height: 50.0,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0), color: Colors.white),
+                  child: TextField(
+                    decoration: InputDecoration(
+                        hintText: 'Enter Address',
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.only(left: 15.0, top: 15.0),
+                        suffixIcon: IconButton(
+                            icon: Icon(Icons.search),
+                            onPressed: searchandNavigate,
+                            iconSize: 30.0)),
+                    onChanged: (val) {
+                      setState(() {
+                        searchAddr = val;
+                      });
+                    },
                   ),
                 ),
               ),
