@@ -4,9 +4,10 @@ class ProfileScreen extends StatefulWidget {
   final lastName;
   final email;
   final _widgets;
-  ProfileScreen(this.firstName, this.lastName, this.email, this._widgets);
+  final list;
+  ProfileScreen(this.firstName, this.lastName, this.email, this._widgets, this.list);
   State<StatefulWidget> createState() {
-    return ProfileScreenState(firstName, lastName, email, _widgets);
+    return ProfileScreenState(firstName, lastName, email, _widgets, list);
   }
 }
 class ProfileScreenState extends State <ProfileScreen> {
@@ -14,8 +15,8 @@ class ProfileScreenState extends State <ProfileScreen> {
   var lastName;
   var email;
   var _widgets;
-  ProfileScreenState(this.firstName, this.lastName, this.email, this._widgets);
-
+  var list;
+  ProfileScreenState(this.firstName, this.lastName, this.email, this._widgets, this.list);
   Widget build(BuildContext context) {
     final topContentText = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -86,7 +87,7 @@ class ProfileScreenState extends State <ProfileScreen> {
                 if(_widgets.length > index) {
                   return ListTile(
                     contentPadding: EdgeInsets.symmetric(
-                        horizontal: 20.0, vertical: 10.0),
+                        horizontal: 20.0, vertical: 25.0),
                     leading: Container(
                       decoration: BoxDecoration(
                         border: Border.all(color: Colors.black),
@@ -95,20 +96,12 @@ class ProfileScreenState extends State <ProfileScreen> {
                       margin: EdgeInsets.all(20.0),
                       child: _widgets[index]
                     ),
-                    onTap: () {
-                     /* Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => InfoScreen(newTrails, index)),
-                      );*/
-                    },
                   );
                 }
               },
 //            ))]),
-
             ))]),
       )
     );
   }
-
 }
