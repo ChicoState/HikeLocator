@@ -103,27 +103,27 @@ class InfoList extends StatelessWidget{
     );
 
     final trailConditionsGeneralStatus = Text(
-      "Condition: " + newTrails[0][curIndex]['conditionStatus'].toString(),
+      newTrails[0][curIndex]['conditionStatus'] == null? "No conditions available.\n" : "Condition: " + newTrails[0][curIndex]['conditionStatus'].toString(),
       style: TextStyle(color: Colors.red, fontSize: 24.0, decoration: TextDecoration.underline),
     );
 
     final summaryText = Text(
-      "Details:\n",
+      "Details:",
       style: TextStyle(color: Colors.black, fontSize: 24.0, decoration: TextDecoration.underline),
     );
 
     final trailConditionsSummary = Text(
-      newTrails[0][curIndex]['summary'].toString(),
+      newTrails[0][curIndex]['summary'] == null? "No summary available.\n" : newTrails[0][curIndex]['summary'].toString() + "\n",
       style: TextStyle(color: Colors.black, fontSize: 18.0),
     );
 
     final trailConditionsDate = Text(
-      "Last Updated: " + newTrails[0][curIndex]['conditionDate'].toString() + "\n",
+      newTrails[0][curIndex]['conditionDate'] == null? "No date available.\n" : "Last Updated: " + newTrails[0][curIndex]['conditionDate'].toString() + "\n",
       style: TextStyle(fontSize: 15.0),
     );
 
     final trailConditionsDetails = Text(
-          newTrails[0][curIndex]['conditionDetails'].toString() + "\n",
+          newTrails[0][curIndex]['conditionDetails'] == null? "No condition details available.\n" : newTrails[0][curIndex]['conditionDetails'].toString() + "\n",
       style: TextStyle(fontSize: 18.0),
     );
 
