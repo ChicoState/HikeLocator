@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'screens/home_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/login_screen.dart';
+
 FirebaseUser mCurrentUser;
 final FirebaseAuth _auth = FirebaseAuth.instance;
 final formkey = GlobalKey<FormState>();
@@ -71,7 +72,7 @@ addUserToDatabase(String uid, fname, lname, email) async{
     );
   });
 }
-addTrailToDatabase(trailId, trailName, trailLoc, trailUrl) async{
+addTrailToDatabase(trailId, trailName, trailLoc, trailUrl, trailLat, trailLon) async{
   var user = await getSignedInUser();
   Firestore.instance
       .collection('users')
@@ -82,7 +83,9 @@ addTrailToDatabase(trailId, trailName, trailLoc, trailUrl) async{
     'Trail ID': trailId,
     'Trail Name': trailName,
     'Trail Location': trailLoc,
-    'Image Url': trailUrl
+    'Image Url': trailUrl,
+    'Latitude': trailLat,
+    'Longitude': trailLon
   }).then((onValue) {
     Fluttertoast.showToast(
         msg: "trail successfully added",
