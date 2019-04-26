@@ -132,9 +132,9 @@ class InfoList extends StatelessWidget{
         width: MediaQuery.of(context).size.width/3,
         child: RaisedButton(
           onPressed: () => {
-            addTrailToDatabase(newTrails[0][curIndex]['id'].toString(), newTrails[0][curIndex]['name'].toString(), newTrails[0][curIndex]['location'].toString(), newTrails[0][curIndex]['imgSmall']),
-            print("added trail to database")
-          },
+            addTrailToDatabase(newTrails[0][curIndex]['id'].toString(), newTrails[0][curIndex]['name'].toString(),
+                newTrails[0][curIndex]['location'].toString(), newTrails[0][curIndex]['imgSmall'],
+                newTrails[0][curIndex]['latitude'].toString(), newTrails[0][curIndex]['longitude'].toString())},
           color: Color.fromRGBO(58, 66, 86, 1.0),
           child:
           Text("Save Hike", style: TextStyle(color: Colors.white)),

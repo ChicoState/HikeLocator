@@ -158,7 +158,7 @@ class HomeScreen extends State<MyApp> {
       decoration: InputDecoration(labelText: len, hintText: 'x mile(s)'),
       onSaved: (String value) {
         if (value.isEmpty && _isenabled == false) {
-          length = 10.0;
+          length = 1.0;
           setState(() {
             _canSwitch = true;
           });
