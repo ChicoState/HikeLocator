@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'screens/home_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/login_screen.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 FirebaseUser mCurrentUser;
@@ -20,12 +19,11 @@ String _firstname = '';
 String _lastname = '';
 String _confirm = "";
 
-
 Widget emailField() {
   return TextFormField(
     keyboardType: TextInputType.emailAddress,
-    decoration: InputDecoration(
-        labelText: "Email Address", hintText: 'me@example.com'),
+    decoration:
+        InputDecoration(labelText: "Email Address", hintText: 'me@example.com'),
     validator: (String value) {
       if (!value.contains('@')) {
         return 'Please enter a valid email';
@@ -53,16 +51,12 @@ Widget passwordField() {
   );
 }
 
-addUserToDatabase(String uid, fname, lname, email) async{
-  Firestore.instance
-      .collection('users')
-      .document(uid)
-      .setData({
+addUserToDatabase(String uid, fname, lname, email) async {
+  Firestore.instance.collection('users').document(uid).setData({
     'First Name': fname,
     'Last Name': lname,
     'Email': email
-  })
-.catchError((e) {
+  }).catchError((e) {
     Fluttertoast.showToast(
         msg: "User creation failed: $e",
         toastLength: Toast.LENGTH_LONG,
@@ -70,11 +64,12 @@ addUserToDatabase(String uid, fname, lname, email) async{
         timeInSecForIos: 1,
         backgroundColor: Colors.red,
         textColor: Colors.white,
-        fontSize: 16.0
-    );
+        fontSize: 16.0);
   });
 }
-addTrailToDatabase(trailId, trailName, trailLoc, trailUrl, trailLat, trailLon) async{
+
+addTrailToDatabase(
+    trailId, trailName, trailLoc, trailUrl, trailLat, trailLon) async {
   var user = await getSignedInUser();
   Firestore.instance
       .collection('users')
@@ -96,10 +91,8 @@ addTrailToDatabase(trailId, trailName, trailLoc, trailUrl, trailLat, trailLon) a
         timeInSecForIos: 1,
         backgroundColor: Colors.red,
         textColor: Colors.white,
-        fontSize: 16.0
-    );
-  })
-      .catchError((e) {
+        fontSize: 16.0);
+  }).catchError((e) {
     Fluttertoast.showToast(
         msg: "Trail could not be added: $e",
         toastLength: Toast.LENGTH_LONG,
@@ -107,10 +100,10 @@ addTrailToDatabase(trailId, trailName, trailLoc, trailUrl, trailLat, trailLon) a
         timeInSecForIos: 1,
         backgroundColor: Colors.red,
         textColor: Colors.white,
-        fontSize: 16.0
-    );
+        fontSize: 16.0);
   });
 }
+
 loginUser(context) async {
   formkey2.currentState.save();
   if (formkey2.currentState.validate()) {
@@ -124,8 +117,7 @@ loginUser(context) async {
           timeInSecForIos: 5,
           backgroundColor: Colors.red,
           textColor: Colors.white,
-          fontSize: 16.0
-      );
+          fontSize: 16.0);
     }).then((newUser) {
       var now = new DateTime.now();
       Firestore.instance
@@ -143,17 +135,18 @@ loginUser(context) async {
             timeInSecForIos: 1,
             backgroundColor: Colors.red,
             textColor: Colors.white,
-            fontSize: 16.0
-        );
+            fontSize: 16.0);
       });
       welcomeUser(newUser);
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyApp(1)));
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => MyApp(1)));
     });
   }
 }
-welcomeUser(newUser) async{
-  DocumentSnapshot result = await Firestore.instance.collection('users')
-      .document(newUser.uid).get();
+
+welcomeUser(newUser) async {
+  DocumentSnapshot result =
+      await Firestore.instance.collection('users').document(newUser.uid).get();
   String myResult = result['First Name'];
   Fluttertoast.showToast(
       msg: "Welcome $myResult!",
@@ -162,25 +155,26 @@ welcomeUser(newUser) async{
       timeInSecForIos: 1,
       backgroundColor: Colors.red,
       textColor: Colors.white,
-      fontSize: 16.0
-  );
+      fontSize: 16.0);
 }
- getSignedInUser() async {
+
+getSignedInUser() async {
   mCurrentUser = await FirebaseAuth.instance.currentUser();
-  if(mCurrentUser == null || mCurrentUser.isAnonymous){
+  if (mCurrentUser == null || mCurrentUser.isAnonymous) {
     return null;
-  }
-  else{
+  } else {
     return mCurrentUser;
   }
 }
+
 createUser(context) async {
   formkey3.currentState.save();
   if (formkey3.currentState.validate()) {
     await _auth
         .createUserWithEmailAndPassword(email: _email, password: _password)
         .then((newUser) {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyApp(1)));
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => MyApp(1)));
       welcomeUser(newUser);
       addUserToDatabase(newUser.uid, _firstname, _lastname, newUser.email);
     }).catchError((e) {
@@ -192,13 +186,12 @@ createUser(context) async {
           timeInSecForIos: 1,
           backgroundColor: Colors.red,
           textColor: Colors.white,
-          fontSize: 16.0
-      );
+          fontSize: 16.0);
     });
   }
 }
 
-signOutUser () async{
+signOutUser() async {
   await _auth.signOut();
 }
 
@@ -207,11 +200,11 @@ Widget confirmField() {
     obscureText: true,
     decoration: InputDecoration(labelText: "Confirm Password"),
     validator: (String value) {
-      if (value.length < 6 ) {
+      if (value.length < 6) {
         return "Password must be at least 6 characters";
       }
 
-      if (_password != _confirm){
+      if (_password != _confirm) {
         return "Passwords do not match.";
       }
     },
@@ -223,8 +216,7 @@ Widget confirmField() {
 
 Widget firstNameField() {
   return TextFormField(
-    decoration: InputDecoration(
-        labelText: "First Name"),
+    decoration: InputDecoration(labelText: "First Name"),
     validator: (String value) {
       if (value.isEmpty) {
         return 'Input cannot be blank';
@@ -235,10 +227,10 @@ Widget firstNameField() {
     },
   );
 }
+
 Widget lastNameField() {
   return TextFormField(
-    decoration: InputDecoration(
-        labelText: "Last Name"),
+    decoration: InputDecoration(labelText: "Last Name"),
     validator: (String value) {
       if (value.isEmpty) {
         return 'Input cannot be blank';
@@ -254,45 +246,56 @@ Widget profile(context) {
   return RaisedButton(
     color: Color.fromRGBO(58, 66, 86, 1.0),
     child: Text("Profile", style: TextStyle(color: Colors.white)),
-    onPressed: () async{
+    onPressed: () async {
       var user = await getSignedInUser();
-      DocumentReference doc = Firestore.instance.collection("users").document(user.uid);
-      QuerySnapshot querySnapshot = await Firestore.instance.collection("users").document(user.uid).collection("trails").getDocuments();
+      DocumentReference doc =
+          Firestore.instance.collection("users").document(user.uid);
+      QuerySnapshot querySnapshot = await Firestore.instance
+          .collection("users")
+          .document(user.uid)
+          .collection("trails")
+          .getDocuments();
       var list = querySnapshot.documents;
-      List<Widget> _widgets = list.map((doc) =>
-          Column(
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
+      List<Widget> _widgets = list
+          .map((doc) => Column(
                 children: <Widget>[
-                  Expanded(flex: 2, child: Image.network(doc.data["Image Url"].toString() , fit: BoxFit.cover)),
-                  Expanded(flex: 1, child: Text(""),),
-                  Expanded(flex: 3, child: Text(
-                    "${doc.data["Trail Name"].toString()}  \n"
-                        "${doc.data["Trail Location"].toString()}",
-                    style: TextStyle(color: Colors.black,),
-                  ),),
-                  IconButton(
-                  //color: Color.fromRGBO(58, 66, 86, 1.0),
-                  //child: Text("Route Trail", style: TextStyle(color: Colors.white)),
-                    icon: Icon(Icons.directions),
-                  onPressed: () async {
-                      _launchURL(doc.data["Latitude"], doc.data["Longitude"]);
-      //Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LogInScreen()));
-      }
-
-      )
-                  ,
-
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Expanded(
+                          flex: 2,
+                          child: Image.network(doc.data["Image Url"].toString(),
+                              fit: BoxFit.cover)),
+                      Expanded(
+                        flex: 1,
+                        child: Text(""),
+                      ),
+                      Expanded(
+                        flex: 3,
+                        child: Text(
+                          "${doc.data["Trail Name"].toString()}  \n"
+                              "${doc.data["Trail Location"].toString()}",
+                          style: TextStyle(
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                          icon: Icon(Icons.directions),
+                          onPressed: () async {
+                            _launchURL(
+                                doc.data["Latitude"], doc.data["Longitude"]);
+                          }),
+                    ],
+                  ),
                 ],
-              ),
-            ],)
-      ).toList();
+              ))
+          .toList();
       var firstName = "doesn't exist";
       var lastName = "doesn't exist";
       var email = "doesn't exist";
-      await doc.get().then((onValue){
-        if(onValue.exists){
+      await doc.get().then((onValue) {
+        if (onValue.exists) {
           firstName = onValue.data['First Name'];
           lastName = onValue.data['Last Name'];
           email = onValue.data['Email'];
@@ -300,22 +303,23 @@ Widget profile(context) {
       });
       Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => ProfileScreen(firstName, lastName, email, _widgets, list),
-          )
-      );
+          MaterialPageRoute(
+            builder: (context) =>
+                ProfileScreen(firstName, lastName, email, _widgets, list),
+          ));
     },
   );
 }
 
-Widget logoutButton(context){
+Widget logoutButton(context) {
   return RaisedButton(
       color: Color.fromRGBO(58, 66, 86, 1.0),
       child: Text("Log Out", style: TextStyle(color: Colors.white)),
       onPressed: () async {
         signOutUser();
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LogInScreen()));
-      }
-  );
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => LogInScreen()));
+      });
 }
 
 _launchURL(latitude, longitude) async {
