@@ -270,6 +270,8 @@ Widget profile(context) {
                         "${doc.data["Trail Location"].toString()}",
                     style: TextStyle(color: Colors.black,),
                   ),)
+                  ,
+
                 ],
               ),
             ],)
@@ -286,7 +288,7 @@ Widget profile(context) {
       });
       Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => ProfileScreen(firstName, lastName, email, _widgets),
+          MaterialPageRoute(builder: (context) => ProfileScreen(firstName, lastName, email, _widgets, list),
           )
       );
     },
