@@ -11,6 +11,7 @@ import '../authentication.dart';
 import '../models/trail_model.dart';
 import '../screens/map_screen.dart';
 
+final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 class MyApp extends StatefulWidget {
   final int loggedIn;
 
@@ -70,6 +71,7 @@ class HomeScreen extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
+        key: _scaffoldKey,
         resizeToAvoidBottomPadding: false,
         appBar: AppBar(
           title: Text("HikeLocator"),
@@ -212,7 +214,19 @@ class HomeScreen extends State<MyApp> {
         onPressed: () async {
           formkey.currentState.save();
           if (_canSwitch == true) {
-            final trails = await fetchData();
+            _scaffoldKey.currentState.showSnackBar(
+                new SnackBar(duration: new Duration(seconds: 2), content:
+                new Row(
+                  children: <Widget>[
+                    new CircularProgressIndicator(),
+                    new Text("  Loading Trails...")
+                  ],
+                ),
+                ));
+            final trails = await fetchData()
+                .whenComplete(() {
+                }
+            );
             Navigator.push(
               context,
               MaterialPageRoute(
