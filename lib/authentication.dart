@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'screens/home_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/login_screen.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 FirebaseUser mCurrentUser;
 final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -269,7 +271,17 @@ Widget profile(context) {
                     "${doc.data["Trail Name"].toString()}  \n"
                         "${doc.data["Trail Location"].toString()}",
                     style: TextStyle(color: Colors.black,),
-                  ),)
+                  ),),
+                  IconButton(
+                  //color: Color.fromRGBO(58, 66, 86, 1.0),
+                  //child: Text("Route Trail", style: TextStyle(color: Colors.white)),
+                    icon: Icon(Icons.directions),
+                  onPressed: () async {
+                      _launchURL(doc.data["Latitude"], doc.data["Longitude"]);
+      //Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LogInScreen()));
+      }
+
+      )
                   ,
 
                 ],
@@ -304,4 +316,13 @@ Widget logoutButton(context){
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LogInScreen()));
       }
   );
+}
+
+_launchURL(latitude, longitude) async {
+  String url = 'google.navigation:q=$latitude,$longitude';
+  if (await canLaunch(url)) {
+    await launch(url);
+  } else {
+    throw 'Could not launch $url';
+  }
 }
