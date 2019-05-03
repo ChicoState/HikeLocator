@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/android.iml" filepath="$PROJECT_DIR$/android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://C:/src/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_core-0.3.1+1/android/firebase_core.iml" filepath="C:/src/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_core-0.3.1+1/android/firebase_core.iml" />
+      <module fileurl="file://C:/src/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_database-2.0.2/android/firebase_database.iml" filepath="C:/src/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_database-2.0.2/android/firebase_database.iml" />
+      <module fileurl="file://C:/src/flutter/.pub-cache/hosted/pub.dartlang.org/geolocator-1.7.0/android/geolocator.iml" filepath="C:/src/flutter/.pub-cache/hosted/pub.dartlang.org/geolocator-1.7.0/android/geolocator.iml" />
+      <module fileurl="file://C:/src/flutter/.pub-cache/hosted/pub.dartlang.org/google_maps_flutter-0.0.3+3/android/google_maps_flutter.iml" filepath="C:/src/flutter/.pub-cache/hosted/pub.dartlang.org/google_maps_flutter-0.0.3+3/android/google_maps_flutter.iml" />
+      <module fileurl="file://C:/src/flutter/.pub-cache/hosted/pub.dartlang.org/permission_handler-2.2.0/android/permission_handler.iml" filepath="C:/src/flutter/.pub-cache/hosted/pub.dartlang.org/permission_handler-2.2.0/android/permission_handler.iml" />
+    </modules>
+  </component>
+</project>
