@@ -9,7 +9,7 @@ void main() async{
   FirebaseUser user = await getSignedInUser();
 
   if (user != null) {
-    _defaultHome = new MyApp(1);
+    _defaultHome = new HomeScreen(1);
   }
   else{
     _defaultHome = new LogInScreen();

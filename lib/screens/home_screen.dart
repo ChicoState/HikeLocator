@@ -12,18 +12,18 @@ import '../models/trail_model.dart';
 import '../screens/map_screen.dart';
 
 final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-class MyApp extends StatefulWidget {
+class HomeScreen extends StatefulWidget {
   final int loggedIn;
 
-  MyApp(this.loggedIn);
+  HomeScreen(this.loggedIn);
 
   @override
   State<StatefulWidget> createState() {
-    return HomeScreen(loggedIn);
+    return HomeScreenState(loggedIn);
   }
 }
 
-class HomeScreen extends State<MyApp> {
+class HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
@@ -45,7 +45,7 @@ class HomeScreen extends State<MyApp> {
   String len = 'Minimum Length of Trail: 1';
   String num = 'Number of Results: 10';
 
-  HomeScreen(this.loggedIn);
+  HomeScreenState(this.loggedIn);
 
   List<TrailModel> trails = [];
   List<dynamic> finalTrails = [];

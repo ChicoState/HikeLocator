@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:hike_locator/authentication.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hike_locator/screens/signup_screen.dart';
+import 'package:hike_locator/screens/home_screen.dart';
+
 
 void main() {
   Widget makeTestableWidgetBlank(Widget child){
@@ -67,5 +69,14 @@ void main() {
     await tester.pump();
 
     expect(find.text('Passwords do not match.'), findsWidgets);
+  });
+
+  testWidgets('Go to maps page', (WidgetTester tester) async {
+    await tester.pumpWidget(makeTestableWidgetBlank(HomeScreen(0)));
+
+    await tester.tap(find.widgetWithText(RaisedButton, 'Find trails near me'));
+    await tester.pump();
+
+    expect(find.text('  Loading Trails...'), findsWidgets);
   });
 }
