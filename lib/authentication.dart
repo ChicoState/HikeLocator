@@ -139,7 +139,7 @@ loginUser(context) async {
       });
       welcomeUser(newUser);
       Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => MyApp(1)));
+          context, MaterialPageRoute(builder: (context) => HomeScreen(1)));
     });
   }
 }
@@ -174,7 +174,7 @@ createUser(context) async {
         .createUserWithEmailAndPassword(email: _email, password: _password)
         .then((newUser) {
       Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => MyApp(1)));
+          context, MaterialPageRoute(builder: (context) => HomeScreen(1)));
       welcomeUser(newUser);
       addUserToDatabase(newUser.uid, _firstname, _lastname, newUser.email);
     }).catchError((e) {
